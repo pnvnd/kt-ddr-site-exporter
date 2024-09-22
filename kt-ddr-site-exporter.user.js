@@ -158,38 +158,54 @@
    */
   async function parseScore(url) {
     const doc = await getDOM(url);
-
-    // get the song title and artist
+  
+    // Get the song title and artist
     let musicInfoTable = doc.getElementById("music_info");
     let songInfo = musicInfoTable.rows[0].cells[1].innerHTML.split("<br>");
-
+  
     let songTitle = songInfo[0];
     let songArtist = songInfo[1];
-
-    // because we're taking the innerHTML, "&" gets returned as "&amp;"
+  
+    // Replace HTML entities
     songTitle = songTitle.replace(/&amp;/g, "&");
     songArtist = songArtist.replace(/&amp;/g, "&");
-
-    // some song titles have a trailing space for some reason wtf konami
-    // see: https://p.eagate.573.jp/game/ddr/ddra20/p/playdata/music_detail.html?index=6ObP9i0qi1ibbi9DOd6bOOOd6Q9dlPi6
-    // hopefully this solution is consistent with the kamaitachi db
-    songTitle = songTitle.replace(/\s+$/, ""); // remove only trailing spaces
-
-    // do it for the song artist too, just to be safe
+  
+    // Remove trailing spaces
+    songTitle = songTitle.replace(/\s+$/, "");
     songArtist = songArtist.replace(/\s+$/, "");
-
-    // get the score details table
+  
+    // Apply specific replacements
+    if (songArtist === "D-Evoke（与那嶺雅人/小日向翔 ）") {
+      songArtist = "D-Evoke（与那嶺雅人/小日向翔）";
+    }
+    if (songArtist === "ビートまりお（COOL&CREATE）") {
+      songArtist = "ビートまりお(COOL&CREATE)";
+    }
+    if (songTitle === "ちくわパフェだよ☆CKP") {
+      songTitle = "ちくわパフェだよ☆ＣＫＰ";
+    }
+    if (songArtist === "BEMANI Sound Team \"[x]\"") {
+      songArtist = "BEMANI Sound Team \"[Ⓧ]\"";
+    }
+    if (songArtist === " L.E.D.") {
+      songArtist = "L.E.D.";
+    }
+    if (songTitle === ".59") {
+      songTitle = "0.59";
+    }
+  
+    // Get the score details table
     let musicDetailTable = doc.getElementById("music_detail_table");
-
-    // determine the lamp
+  
+    // Determine the lamp
     let grade = musicDetailTable.rows[1].cells[1].innerText;
     let fullComboType = musicDetailTable.rows[4].cells[1].innerText;
     let lamp = computeLamp(grade, fullComboType);
-
-    // get the timestamp
+  
+    // Get the timestamp
     let timeAchieved = musicDetailTable.rows[3].cells[3].innerText;
     timeAchieved = convertToUnix(timeAchieved);
-
+  
     let scoreObj = {
       score: Number(musicDetailTable.rows[1].cells[3].innerText),
       lamp: lamp,
@@ -199,7 +215,7 @@
       difficulty: getDifficulty(url),
       timeAchieved: timeAchieved,
     };
-
+  
     return scoreObj;
   }
 
@@ -256,17 +272,17 @@
    * @param {HTMLButtonElement} button - The button used to call this function.
    */
   async function exportScores(gameVer, playtype, button) {
-    scores = []; // clear the scores array of any previous exports
-
+    scores = []; // Clear the scores array of any previous exports
+  
     let baseUrl = baseUrls[gameVer][playtype];
     let numPages = totalPages[gameVer][playtype];
-
-    // disable both buttons while we're working
+  
+    // Disable both buttons while we're working
     disableButton(buttonSP);
     disableButton(buttonDP);
-
+  
     try {
-      // iterate over every play-data page
+      // Iterate over every play-data page
       for (let i = 0; i < numPages; i++) {
         button.textContent = `Exporting: Reading page ${i + 1}/${numPages}...`;
         await parsePlayData(baseUrl + i);
@@ -274,42 +290,45 @@
     } catch (error) {
       button.textContent = "Failed to read scores. Are you logged in?";
       console.error(error);
-
+  
       enableButton(buttonSP);
       enableButton(buttonDP);
       return;
     }
-
-    // create the json and prompt a download
+  
+    // Create the json and prompt a download
+    let version = (gameVer === "A20") ? "a20plus" : (gameVer === "A3") ? "a3" : "";
+    
     const batchManual = JSON.stringify(
       {
         meta: {
           game: "ddr",
           playtype: playtype,
           service: "kt-ddr-site-exporter",
+          version: version
         },
         scores: scores,
       },
       null,
       2
     );
-
+  
     const url = URL.createObjectURL(
       new Blob([batchManual], { type: "application/json" })
     );
-
+  
     const timestamp = getFormattedDateTime();
     const fileName = `${timestamp}_ddr-export_${playtype}.json`;
-
+  
     const a = document.createElement("a");
     a.href = url;
-    a.download = fileName; // use the new fileName whilst downloading :)
+    a.download = fileName; // Use the new fileName whilst downloading
     document.body.appendChild(a);
     a.click();
-
+  
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-
+  
     button.textContent = `Exported ${scores.length} scores.`;
     enableButton(buttonSP);
     enableButton(buttonDP);
