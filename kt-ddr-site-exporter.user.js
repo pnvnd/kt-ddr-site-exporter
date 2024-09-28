@@ -192,7 +192,6 @@
       scoreObj.matchType = "inGameID";
       scoreObj.identifier = "37310";
     }
-  }
   
     // Get the score details table
     let musicDetailTable = doc.getElementById("music_detail_table");
