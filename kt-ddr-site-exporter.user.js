@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         kt-ddr-site-exporter
 // @namespace    https://datacrunch.ca
-// @version      1.2.1
+// @version      1.3.0
 // @description  Retrieve a JSON of your DDR scores in BATCH-MANUAL format.
 // @author       tranq88, karlsson2, pnvnd
 // @match        https://p.eagate.573.jp/game/ddr/ddra20/p*
