@@ -163,23 +163,12 @@
     let musicInfoTable = doc.getElementById("music_info");
     let songInfo = musicInfoTable.rows[0].cells[1].innerHTML.split("<br>");
   
-    let songTitle = songInfo[0];
-    let songArtist = songInfo[1];
-  
-    // Replace HTML entities
-    songTitle = songTitle.replace(/&amp;/g, "&");
-    songArtist = songArtist.replace(/&amp;/g, "&");
-  
-    // Remove trailing spaces
-    songTitle = songTitle.replace(/\s+$/, "");
-    songArtist = songArtist.replace(/\s+$/, "");
+    let songTitle = songInfo[0].replace(/&amp;/g, "&").trim();
+    let songArtist = songInfo[1].replace(/&amp;/g, "&").trim();
   
     // Apply specific replacements
     if (songArtist === "D-Evoke（与那嶺雅人/小日向翔 ）") {
       songArtist = "D-Evoke（与那嶺雅人/小日向翔）";
-    }
-    if (songArtist === "ビートまりお（COOL&CREATE）") {
-      songArtist = "ビートまりお(COOL&CREATE)";
     }
     if (songTitle === "ちくわパフェだよ☆CKP") {
       songTitle = "ちくわパフェだよ☆ＣＫＰ";
@@ -193,6 +182,17 @@
     if (songTitle === ".59") {
       songTitle = "0.59";
     }
+    if (songTitle === "ナイト・オブ・ナイツ") {
+      songArtist = "ビートまりお(COOL&CREATE)";
+    } 
+    if (songTitle === "Help me, ERINNNNNN!!") {
+      songArtist = "ビートまりお（COOL&CREATE）";
+    }
+    if (songTitle === "B4U (The Acolyte mix)") {
+      scoreObj.matchType = "inGameID";
+      scoreObj.identifier = "37310";
+    }
+  }
   
     // Get the score details table
     let musicDetailTable = doc.getElementById("music_detail_table");
@@ -209,8 +209,8 @@
     let scoreObj = {
       score: Number(musicDetailTable.rows[1].cells[3].innerText),
       lamp: lamp,
-      matchType: "songTitle",
-      identifier: songTitle,
+      matchType: "songTitle", // Default matchType
+      identifier: songTitle, // Default identifier
       artist: songArtist,
       difficulty: getDifficulty(url),
       timeAchieved: timeAchieved,
