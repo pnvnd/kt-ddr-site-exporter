@@ -188,10 +188,6 @@
     if (songTitle === "Help me, ERINNNNNN!!") {
       songArtist = "ビートまりお（COOL&CREATE）";
     }
-    if (songTitle === "B4U (The Acolyte mix)") {
-      matchType = "inGameID";
-      identifier = "37310";
-    }
   
     // Get the score details table
     let musicDetailTable = doc.getElementById("music_detail_table");
