@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         kt-ddr-site-exporter
 // @namespace    https://datacrunch.ca
-// @version      1.3.1
+// @version      1.3.2
 // @description  Retrieve a JSON of your DDR scores in BATCH-MANUAL format.
 // @author       tranq88, karlsson2, pnvnd
 // @match        https://p.eagate.573.jp/game/ddr/ddra20/p*
@@ -189,8 +189,8 @@
       songArtist = "ビートまりお（COOL&CREATE）";
     }
     if (songTitle === "B4U (The Acolyte mix)") {
-      scoreObj.matchType = "inGameID";
-      scoreObj.identifier = "37310";
+      matchType = "inGameID";
+      identifier = "37310";
     }
   
     // Get the score details table
